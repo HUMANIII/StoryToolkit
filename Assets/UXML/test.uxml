@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/USS/test.uss?fileID=7433441132597879392&amp;guid=f62575b7db2efe640bd3a900f5de50e9&amp;type=3#test" />
+    <ui:Button text="testButton" />
+</ui:UXML>
