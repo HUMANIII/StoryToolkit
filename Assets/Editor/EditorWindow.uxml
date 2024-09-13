@@ -1,0 +1,8 @@
+<!-- EditorWindow.uxml -->
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement>
+        <ui:TextField name="inputField" label="Enter Text" />
+        <ui:Button name="submitButton" text="Submit" />
+        <ui:Label name="outputLabel" text="Output will appear here" />
+    </ui:VisualElement>
+</ui:UXML>
