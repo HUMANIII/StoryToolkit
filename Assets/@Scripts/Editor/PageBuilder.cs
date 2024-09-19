@@ -1,8 +1,9 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
-public class PageBuilder :EditorWindow
+public class PageBuilder : EditorWindow
 {
     private const string windowName = "PageBuilder";
     private const string Image = "Page Image";
@@ -26,6 +27,9 @@ public class PageBuilder :EditorWindow
     private Image image;
     private Label outputLabel;
 
+    private List<PageBuilderElement> elements = new();
+    private List<List<PageBuilderElement>> buildedElements = new();
+
 
     [MenuItem("Window/Page Builder")]
     public static void ShowExample()
@@ -44,19 +48,19 @@ public class PageBuilder :EditorWindow
         //var ss = AssetDatabase.LoadAssetAtPath<StyleSheet>(string.Format(ToolKitPath.USS, windowName));
         //rootVisualElement.styleSheets.Add(ss);
 
-
-        kor = rootVisualElement.Q<TextField>(TextKor);
-        eng = rootVisualElement.Q<TextField>(TextEng);
-        book = rootVisualElement.Q<TextField>(BookName);
         page = rootVisualElement.Q<IntegerField>(PageNum);
         add = rootVisualElement.Q<Button>(BtnAdd);
         save = rootVisualElement.Q<Button>(BtnSave);
         buildedPage = rootVisualElement.Q<ListView>(BuildedPage);
-        image = rootVisualElement.Q<Image>(PageImage);
         outputLabel = rootVisualElement.Q<Label>(OutputLabel);
 
         add.clicked += () =>
         {
+            foreach(var element in elements)
+            {
+                
+            }
+            buildedElements.Add(elements);
             outputLabel.text = string.Format("Book {0} : {1}Page Added", book.value, page.value);
         };
     }

@@ -1,19 +1,16 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:VisualElement name="PageBuildCore" style="flex-grow: 1; align-items: flex-start; align-content: flex-start; position: absolute; align-self: flex-start; height: 100%; width: 70%;">
-        <engine:Image name="PageImage" style="flex-grow: 1; width: 100%;" />
-        <engine:VisualElement name="Tail" style="flex-grow: 1; width: 100%; height: 0;">
-            <engine:VisualElement name="PageInfo" style="flex-grow: 1; height: 0; width: 100%;">
-                <engine:TextField label="BookName" name="BookName" style="width: 60%; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute;" />
-                <engine:IntegerField label="PageNum&#10;" value="0" name="PageNum" style="position: absolute; flex-direction: column; align-self: flex-end; width: 30%;" />
+    <engine:ScrollView name="ScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" style="width: 70%; height: 100%; position: absolute; align-self: flex-start;">
+        <engine:DropdownField label="AddOption" name="Options" style="flex-direction: column-reverse;" />
+        <engine:VisualElement name="Tail" style="flex-grow: 1; width: 100%; height: 589px; align-content: flex-end; position: relative; justify-content: flex-end; align-self: center; bottom: -69px; left: auto;">
+            <engine:VisualElement name="PageInfo" style="flex-grow: 1; height: auto; width: 100%; bottom: 30px;">
+                <engine:TextField label="BookName" name="BookName" style="width: 300px; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 40px; left: 0;" />
+                <engine:IntegerField label="PageNum&#10;" value="0" name="PageNum" style="position: absolute; flex-direction: column; align-self: center; width: 30%; top: 40px; left: 300px; align-items: flex-start;" />
+                <engine:Toggle label="PageNameOption" name="PageNameOption" tooltip="if value is false AddressableName will be &quot;BookName&quot;_&quot;PageNum&quot;" style="position: absolute; top: 40px; left: 414px; flex-direction: column;" />
+                <engine:Button text="Add" name="Add" style="width: 45%; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 110px; left: 4px;" />
+                <engine:Button text="Save" name="Save" style="position: absolute; flex-direction: column; align-self: flex-end; width: 45%; top: 110px; left: auto; right: 0;" />
             </engine:VisualElement>
-            <engine:TextField label="TextKor" name="TextKor" style="width: 100%; flex-direction: column; align-items: stretch; align-self: stretch;" />
-            <engine:TextField label="TextEng" name="TextEng" style="flex-direction: column; align-self: auto; width: 100%;" />
-            <engine:VisualElement name="PageInfo" style="flex-grow: 1; height: 0; width: 100%;">
-                <engine:Button text="Add" name="Add" style="width: 45%; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute;" />
-                <engine:Button text="Save" name="Save" style="position: absolute; flex-direction: column; align-self: flex-end; width: 45%;" />
-            </engine:VisualElement>
-            <engine:Label name="OutputLabel" text="State Will Appear" />
+            <engine:Label name="OutputLabel" text="State Will Appear" style="bottom: auto; top: 150px; align-content: auto; -unity-text-align: upper-left; position: absolute;" />
         </engine:VisualElement>
-    </engine:VisualElement>
+    </engine:ScrollView>
     <engine:ListView name="BuildedPage" style="position: absolute; align-self: flex-end; width: 30%; height: 100%; padding-left: 10px;" />
 </engine:UXML>
