@@ -7,26 +7,26 @@ public class CustomEditorWindow : EditorWindow
     [MenuItem("Window/Custom UI Toolkit Editor")]
     public static void ShowExample()
     {
-        CustomEditorWindow wnd = GetWindow<CustomEditorWindow>();
+        var wnd = GetWindow<CustomEditorWindow>();
         wnd.titleContent = new GUIContent("UI Toolkit Editor");
     }
 
     public void CreateGUI()
     {
-        // UXML ÅÛÇÃ¸´À» ºÒ·¯¿È
+        // UXML ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Editor/EditorWindow.uxml");
         visualTree.CloneTree(rootVisualElement);
 
-        // USS ½ºÅ¸ÀÏ ½ÃÆ® Àû¿ë (¼±ÅÃ »çÇ×)
+        // USS ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         //var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/EditorWindow.uss");
         //rootVisualElement.styleSheets.Add(styleSheet);
 
-        // UI ¿ä¼Ò °¡Á®¿À±â
+        // UI ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         var inputField = rootVisualElement.Q<TextField>("inputField");
         var submitButton = rootVisualElement.Q<Button>("submitButton");
         var outputLabel = rootVisualElement.Q<Label>("outputLabel");
 
-        // ¹öÆ° Å¬¸¯ ÀÌº¥Æ® Ã³¸®
+        // ï¿½ï¿½Æ° Å¬ï¿½ï¿½ ï¿½Ìºï¿½Æ® Ã³ï¿½ï¿½
         submitButton.clicked += () =>
         {
             outputLabel.text = "You entered: " + inputField.value;

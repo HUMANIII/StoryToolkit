@@ -2,14 +2,27 @@ using UnityEngine;
 
 public abstract class PageBuilderElement
 {
-    //ºô´õ ÆĞÅÏÀ» »ç¿ëÇØ¼­ ´Ù½Ã ±¸ÇöÇØº¸±â
-    //³»°¡ »ı°¢ÇÏ´Â°Í -> Æ¯Á¤ ÇÔ¼ö È£Ãâ½Ã ¸Å°³º¯¼ö·Î µé¾î°£ Å¬·¡½º¿¡ º¯È­¸¦ ÁÖ¾î¼­ ¸®ÅÏÇÏ´Â°Í ClassA.FucA().FucB().FucC() ÀÌ·±½ÄÀ¸·Î
-    //À§¿¡¼­ FuncA µîµîÀÌ °¢ ¿ä¼Ò·ê Ãß°¡ÇÏ´ÂÇÔ¼öÀÌ¸ç °¢ÀÚÀÇ ¼¼¼¼ÇÑ °ÍµéÀº °¢°¢ÀÇ Å¬·¡½º¿¡¼­ ±¸ÇöÇÏµµ·Ï ÇÏ´Â°Í
+    //ë¹Œë” íŒ¨í„´ì„ ì‚¬ìš©í•´ì„œ ë‹¤ì‹œ êµ¬í˜„í•´ë³´ê¸°
+    //ë‚´ê°€ ìƒê°í•˜ëŠ”ê²ƒ -> íŠ¹ì • í•¨ìˆ˜ í˜¸ì¶œì‹œ ë§¤ê°œë³€ìˆ˜ë¡œ ë“¤ì–´ê°„ í´ë˜ìŠ¤ì— ë³€í™”ë¥¼ ì£¼ì–´ì„œ ë¦¬í„´í•˜ëŠ”ê²ƒ ClassA.FucA().FucB().FucC() ì´ëŸ°ì‹ìœ¼ë¡œ
+    //ìœ„ì—ì„œ FuncA ë“±ë“±ì´ ê° ìš”ì†Œë£° ì¶”ê°€í•˜ëŠ”í•¨ìˆ˜ì´ë©° ê°ìì˜ ì„¸ì„¸í•œ ê²ƒë“¤ì€ ê°ê°ì˜ í´ë˜ìŠ¤ì—ì„œ êµ¬í˜„í•˜ë„ë¡ í•˜ëŠ”ê²ƒ
     public string ElementName;
     public string ElementPath;
+    public PageBuilder pageBuilder;
     public bool isGameObject;
+    /// <summary>
+    /// ì €ì¥ ì‹œ í˜¸ì¶œ
+    /// </summary>
     public abstract void SaveData();
-    public abstract void AddElement();
+    /// <summary>
+    /// ìš”ì†Œ ì¶”ê°€ì‹œ í˜¸ì¶œ - ì¼ë°˜ì ìœ¼ë¡œ ê° ë°ì´í„°ë¥¼ ì €ì¥í•˜ê¸° ìœ„í•´ ì‚¬ìš©
+    /// </summary>
+    public abstract void AddElement(PageBuilder pb);
+    /// <summary>
+    /// ìš”ì†Œ ì‚­ì œì‹œ í˜¸ì¶œ
+    /// </summary>
     public abstract void RemoveElement();
+    /// <summary>
+    /// ëª¨ë“  ìš”ì†Œ ì´ˆê¸°í™” ë²„íŠ¼ ëˆŒë €ì„ë•Œ í˜¸ì¶œ
+    /// </summary>
     public abstract void Reset();
 }
