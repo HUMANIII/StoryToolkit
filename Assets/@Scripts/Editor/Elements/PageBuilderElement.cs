@@ -1,6 +1,8 @@
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public abstract class PageBuilderElement
+public abstract class PageBuilderElement : EditorWindow
 {
     //빌더 패턴을 사용해서 다시 구현해보기
     //내가 생각하는것 -> 특정 함수 호출시 매개변수로 들어간 클래스에 변화를 주어서 리턴하는것 ClassA.FucA().FucB().FucC() 이런식으로
@@ -9,6 +11,7 @@ public abstract class PageBuilderElement
     public string ElementPath;
     public PageBuilder pageBuilder;
     public bool isGameObject;
+    protected VisualElement element;
     /// <summary>
     /// 저장 시 호출
     /// </summary>
@@ -24,5 +27,20 @@ public abstract class PageBuilderElement
     /// <summary>
     /// 모든 요소 초기화 버튼 눌렀을때 호출
     /// </summary>
-    public abstract void Reset();
+    public abstract void ResetElement();
+
+    protected T GetData<T>(string windowName) where T : VisualElement, new()
+    {
+        var vt = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(string.Format(ToolKitPath.UXML, windowName));
+        vt.CloneTree(rootVisualElement);
+        element = rootVisualElement;
+        pageBuilder.ElementsContainer.Add(element);
+        var rtn = element.Q<T>(windowName);
+        if (rtn == null)
+        {
+            rtn = new T();
+            element.Add(rtn);
+        }
+        return rtn;
+    }
 }

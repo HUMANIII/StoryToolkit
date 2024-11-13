@@ -5,8 +5,9 @@ using System.Collections.Generic;
 
 public class PageBuilder : EditorWindow
 {
-    public VisualElement RootElement;
+    public VisualElement ElementsContainer;
     
+    private const string Conainter = "Conainter";
     private const string windowName = "PageBuilder";
     private const string Image = "Page Image";
     private const string TextKor = "TextKor";
@@ -33,7 +34,7 @@ public class PageBuilder : EditorWindow
     private List<List<PageBuilderElement>> buildedElements = new();
 
 
-    [MenuItem("Window/Page Builder")]
+    [MenuItem("Page Builder/Page Builder")]
     public static void ShowExample()
     {
         var wnd = GetWindow<PageBuilder>();
@@ -45,16 +46,16 @@ public class PageBuilder : EditorWindow
         // UXML ���ø��� �ҷ���
         var vt = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(string.Format(ToolKitPath.UXML, windowName));
         vt.CloneTree(rootVisualElement);
-        RootElement = rootVisualElement;
         // USS ��Ÿ�� ��Ʈ ���� (���� ����)
         //var ss = AssetDatabase.LoadAssetAtPath<StyleSheet>(string.Format(ToolKitPath.USS, windowName));
         //rootVisualElement.styleSheets.Add(ss);
 
-        page = RootElement.Q<IntegerField>(PageNum);
-        add = RootElement.Q<Button>(BtnAdd);
-        save = RootElement.Q<Button>(BtnSave);
-        buildedPage = RootElement.Q<ListView>(BuildedPage);
-        outputLabel = RootElement.Q<Label>(OutputLabel);
+        page = rootVisualElement.Q<IntegerField>(PageNum);
+        add = rootVisualElement.Q<Button>(BtnAdd);
+        save = rootVisualElement.Q<Button>(BtnSave);
+        buildedPage = rootVisualElement.Q<ListView>(BuildedPage);
+        outputLabel = rootVisualElement.Q<Label>(OutputLabel);
+        ElementsContainer = rootVisualElement.Q<VisualElement>(Conainter);
 
         add.clicked += () =>
         {
@@ -72,7 +73,7 @@ public class PageBuilder : EditorWindow
     {
         foreach (var element in elements)
         {
-            element.Reset();
+            element.ResetElement();
         }
         elements.Clear();
     }

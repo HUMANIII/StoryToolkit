@@ -5,40 +5,33 @@ using UnityEngine.UIElements;
 
 public class ImageElement : PageBuilderElement
 {
-    public const string ElementNameFormat = "Image_{0}";
+    private const string TAG = "Image";
+    private const string ElementNameFormat = "Image_{0}";
     private static List<ImageElement> imgElements = new();
     private Image img;
 
     public override void AddElement(PageBuilder builder)
     {
-        ElementName = string.Format(ElementNameFormat, imgElements.Count);
-        img = new()
-        {
-            name = ElementName,
-            style =
-            {
-                backgroundColor = Color.white,
-                width = 100,
-                height = 100
-            }
-        };
         pageBuilder = builder;
-        pageBuilder.RootElement.Add(img);
+        img = GetData<Image>(TAG);
+        ElementName = string.Format(ElementNameFormat, imgElements.Count);
+        img.name = ElementName;
+        img.style.backgroundColor = Color.white;
+        img.style.width = 100;
+        img.style.height = 100;
         imgElements.Add(this);
     }
 
     public override void RemoveElement()
     {
-        img.RemoveFromHierarchy();
+        element.RemoveFromHierarchy();
         imgElements.Remove(this);
-        pageBuilder.RootElement.Remove(img);
-        
         UpdateElements();
     }
 
-    public override void Reset()
+    public override void ResetElement()
     {
-        img.RemoveFromHierarchy();
+        element.RemoveFromHierarchy();
         imgElements.Remove(this);
     }
 
