@@ -60,6 +60,7 @@ public class PageBuilder : EditorWindow
         add.clicked += () =>
         {
             AddElement(new ImageElement());
+            AddElement(new TextBoxElement());
             // foreach(var element in elements)
             // {
             //     

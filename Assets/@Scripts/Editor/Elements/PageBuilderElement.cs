@@ -1,9 +1,10 @@
+using System;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 public abstract class PageBuilderElement : EditorWindow
 {
+    private const string DeleteBtn = "DeleteButton";
     //빌더 패턴을 사용해서 다시 구현해보기
     //내가 생각하는것 -> 특정 함수 호출시 매개변수로 들어간 클래스에 변화를 주어서 리턴하는것 ClassA.FucA().FucB().FucC() 이런식으로
     //위에서 FuncA 등등이 각 요소룰 추가하는함수이며 각자의 세세한 것들은 각각의 클래스에서 구현하도록 하는것
@@ -41,6 +42,33 @@ public abstract class PageBuilderElement : EditorWindow
             rtn = new T();
             element.Add(rtn);
         }
+        element.Q<Button>(DeleteBtn).clickable.clicked += RemoveElement;
         return rtn;
+    }
+
+    /// <summary>
+    /// 드래그 드랍시 경로를 기반으로 한 특정 액션을 튀하게 만듬
+    /// </summary>
+    /// <param name="element">드랍 시 액션을 취할 요소</param>
+    /// <param name="action">경로를 받은 이후에 실행 할 액션</param>
+    /// <typeparam name="T">드래그된 요소의 자료형 필터링</typeparam>
+    protected void RegisterDragDropOption<T>(VisualElement element, Action<string> action)
+    {
+        element.RegisterCallback<DragEnterEvent>(ev => DragAndDrop.AcceptDrag());
+        element.RegisterCallback<DragUpdatedEvent>(ev =>
+            {
+                if (DragAndDrop.objectReferences.Length > 0 && DragAndDrop.objectReferences[0] is T)
+                {
+                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                }
+            });
+        element.RegisterCallback<DragPerformEvent>(ev =>
+        {
+            if (DragAndDrop.objectReferences.Length > 0 && DragAndDrop.objectReferences[0] is T)
+            {
+                var path = AssetDatabase.GetAssetPath(DragAndDrop.objectReferences[0]);
+                action(path);
+            }
+        });
     }
 }

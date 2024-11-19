@@ -8,18 +8,19 @@ public class ImageElement : PageBuilderElement
     private const string TAG = "Image";
     private const string ElementNameFormat = "Image_{0}";
     private static List<ImageElement> imgElements = new();
-    private Image img;
+    private VisualElement img;
 
     public override void AddElement(PageBuilder builder)
     {
+        //기본적인 정보 세팅
         pageBuilder = builder;
-        img = GetData<Image>(TAG);
+        img = GetData<VisualElement>(TAG);
         ElementName = string.Format(ElementNameFormat, imgElements.Count);
         img.name = ElementName;
-        img.style.backgroundColor = Color.white;
-        img.style.width = 100;
-        img.style.height = 100;
         imgElements.Add(this);
+        
+        //드래그  드랍 옵션 추가
+        RegisterDragDropOption<Texture2D>(img, ChangeImage);
     }
 
     public override void RemoveElement()
@@ -49,9 +50,9 @@ public class ImageElement : PageBuilderElement
         }
     }
 
-    public void ChangeImage(string path)
+    private void ChangeImage(string path)
     {
         ElementPath = path;
-        img.image = AssetDatabase.LoadAssetAtPath<Texture2D>(ElementPath);
+        img.style.backgroundImage = AssetDatabase.LoadAssetAtPath<Texture2D>(ElementPath);
     }
 }
