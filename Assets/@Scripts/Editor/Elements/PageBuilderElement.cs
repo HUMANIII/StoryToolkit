@@ -12,7 +12,8 @@ public abstract class PageBuilderElement : EditorWindow
     public string ElementPath;
     public PageBuilder pageBuilder;
     public bool isGameObject;
-    protected VisualElement element;
+    public VisualElement element { get; protected set; }
+
     /// <summary>
     /// 저장 시 호출
     /// </summary>
