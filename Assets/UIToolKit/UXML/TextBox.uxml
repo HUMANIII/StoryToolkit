@@ -1,5 +1,5 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <engine:VisualElement style="flex-grow: 1; height: 325px;">
+    <engine:VisualElement name="VisualElement" style="flex-grow: 1; height: auto;">
         <engine:Button text="x" name="DeleteButton" style="top: 0; width: 25px; height: 25px; align-self: flex-end;" />
         <engine:TextField label="Text Field" placeholder-text="filler text" name="TextBox" />
     </engine:VisualElement>

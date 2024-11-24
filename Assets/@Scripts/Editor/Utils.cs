@@ -1,6 +1,7 @@
 using System;
+using Scripts.Editor.Elements;
 using UnityEngine;
-using static PageBuilderElement;
+using static Scripts.Editor.Elements.PageBuilderElement;
 
 public class ToolKitPath
 {

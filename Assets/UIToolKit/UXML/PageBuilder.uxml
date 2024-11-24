@@ -6,11 +6,12 @@
         <engine:VisualElement name="Tail" style="flex-grow: 1; width: 576px; height: 315px; align-content: flex-end; position: absolute; justify-content: flex-end; align-self: center; bottom: -161px; left: auto; -unity-text-align: lower-left; flex-direction: column-reverse; flex-wrap: wrap; top: auto; right: auto; padding-top: 157px;">
             <engine:Label name="OutputLabel" text="State Will Appear" style="bottom: auto; top: 150px; align-content: auto; -unity-text-align: upper-left; position: absolute;" />
             <engine:VisualElement name="PageInfo" style="flex-grow: 1; height: auto; width: 100%; bottom: 0;">
-                <engine:TextField label="BookName" name="BookName" style="width: 300px; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 40px; left: 0;" />
-                <engine:IntegerField label="PageNum&#10;" value="0" name="PageNum" style="position: absolute; flex-direction: column; align-self: center; width: 30%; top: 40px; left: 300px; align-items: flex-start;" />
-                <engine:Toggle label="PageNameOption" name="PageNameOption" tooltip="if value is false AddressableName will be &quot;BookName&quot;_&quot;PageNum&quot;" style="position: absolute; top: 40px; left: 414px; flex-direction: column;" />
-                <engine:Button text="Add" name="Add" style="width: 45%; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 110px; left: 4px;" />
-                <engine:Button text="Save" name="Save" style="position: absolute; flex-direction: column; align-self: flex-end; width: 45%; top: 110px; left: auto; right: 0;" />
+                <engine:TextField label="PackageName" name="BookName" style="width: 300px; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 40px; left: 0;" />
+                <engine:IntegerField label="PackageNum" value="0" name="PackageNum" style="position: absolute; flex-direction: column; align-self: center; width: 30%; top: 40px; left: 300px; align-items: flex-start;" />
+                <engine:Toggle label="PackageNameOption" name="PackageNameOption" tooltip="if value is false AddressableName will be &quot;BookName&quot;_&quot;PageNum&quot;" style="position: absolute; top: 40px; left: 414px; flex-direction: column;" />
+                <engine:Button text="Add" name="Add" style="width: 200px; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 110px; left: 4px;" />
+                <engine:Button text="Save" name="Save" style="position: absolute; flex-direction: column; align-self: flex-end; width: 200px; top: 110px; left: 220px; right: auto;" />
+                <engine:Button text="Clear" name="Clear" style="position: absolute; flex-direction: column; align-self: flex-end; width: 100px; top: 109px; left: 440px; right: auto;" />
             </engine:VisualElement>
         </engine:VisualElement>
     </engine:ScrollView>
