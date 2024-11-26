@@ -70,8 +70,7 @@ namespace Scripts.Editor
             options = rootVisualElement.Q<DropdownField>(Options);
             SetDropDown();
             LoadCurPackageSetting();
-        
-            add.clicked += SaveCurPackageSetting;
+            
             clear.clicked += ClearPage;
         }
 
@@ -103,12 +102,12 @@ namespace Scripts.Editor
             if (elementName == ChooseOptions)
                 return;
         
-            if (!types.ContainsKey(elementName))
+            if (!types.TryGetValue(elementName, out var type))
             {
                 Debug.LogError("Type not found: " + elementName);
                 return;
             }
-            PageBuilderElement element = CreateInstance(types[elementName]) as PageBuilderElement;
+            PageBuilderElement element = CreateInstance(type) as PageBuilderElement;
             //PageBuilderElement element = Activator.CreateInstance(types[elementName]) as PageBuilderElement;
             if (element == null)
             {

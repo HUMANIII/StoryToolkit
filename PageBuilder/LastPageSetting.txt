@@ -1,1 +1,1 @@
-	ImageElement	TextBoxElement
+	TextBoxElement	ImageElement
