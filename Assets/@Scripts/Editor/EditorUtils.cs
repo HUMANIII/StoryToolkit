@@ -132,15 +132,11 @@ namespace Scripts.Editor
             //리턴용 객체 생성
             AddressAbleInfo rtn = default;
             
-            //해당 경로에 있는 에셋의 자료형 을 가져온다
-            Object asset = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
-            rtn.Type = asset.GetType();
-            
             //해당 경로에 있는 에셋이 어드레서블에 등록 되어 있는지 확인 후 이름(주소)를 가져온다.
             AddressableAssetSettings setting = AddressableAssetSettingsDefaultObject.Settings;
             string guid = AssetDatabase.AssetPathToGUID(path);
             //만약 경로에 에셋이 없다면 빠른 리턴
-            if (guid != "")
+            if (guid == "")
                 return rtn;
             
             AddressableAssetEntry entry = setting.FindAssetEntry(guid);
@@ -156,6 +152,10 @@ namespace Scripts.Editor
                 newEntry.address = newName;
                 rtn.Name = newEntry.address;
             }
+            
+            //해당 경로에 있는 에셋의 자료형 을 가져온다
+            Object asset = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
+            rtn.Type = asset.GetType();
             return rtn;
         }
     }

@@ -15,20 +15,30 @@ namespace Scripts.Editor.Elements
         [FormerlySerializedAs("ElementPath")] public string elementPath;
         public PageBuilder pageBuilder;
         public bool isGameObject;
-        protected VisualElement Element { get; set; }
+        public VisualElement Element { get; private set; }
 
         /// <summary>
-        /// 저장 시 호출
+        /// 저장한 문자열로 값을 불러오기
         /// </summary>
-        public abstract void SaveData(ref StringBuilder builder);
+        /// <param name="data"></param>
+        public abstract void SetData(string data);
+        /// <summary>
+        /// 저장될 데이터를 StringBuilder에 넣어둠
+        /// </summary>
+        /// <param name="builder">문자열을 저장할 StringBuilder</param>
+        public abstract void GetData(ref StringBuilder builder);
         /// <summary>
         /// 요소 추가시 호출 - 일반적으로 각 데이터를 저장하기 위해 사용
         /// </summary>
         public abstract void AddElement(PageBuilder pb);
+
         /// <summary>
         /// 요소 삭제시 호출
         /// </summary>
-        protected abstract void RemoveElement();
+        protected void RemoveElement()
+        {
+            pageBuilder.RemoveElement(this);
+        }
     
         /// <summary>
         /// 내부 요소들 초기화 할 때 호출

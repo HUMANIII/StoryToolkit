@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -9,7 +11,6 @@ namespace Scripts.Editor.Elements
     public class ImageElement : PageBuilderElement
     {
         private const string Tag = "Image";
-        public const string ElementNameFormat = "@Image: ";
         private VisualElement img;
 
         public override void AddElement(PageBuilder builder)
@@ -22,12 +23,6 @@ namespace Scripts.Editor.Elements
             RegisterDragDropOption<Texture2D>(img, ChangeImage);
         }
 
-        protected override void RemoveElement()
-        {
-            Element.RemoveFromHierarchy();
-            UpdateElements();
-        }
-
         public override void ResetElement()
         {
             img.style.backgroundImage = null;
@@ -38,11 +33,15 @@ namespace Scripts.Editor.Elements
             Element.RemoveFromHierarchy();
         }
 
-        public override void SaveData(ref StringBuilder builder)
+        public override void SetData(string data)
         {
-            builder.Append(ElementNameFormat);
-            string data = elementPath.GetAddressableInfo().ToString();
-            builder.Append(data);
+        }
+
+        public override void GetData(ref StringBuilder builder)
+        {
+            builder.AppendLine(nameof(ImageElement));
+            string data = elementPath.GetAddressableInfo(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)).ToString();
+            builder.AppendLine(data);
         }
 
         private void UpdateElements()
@@ -52,6 +51,7 @@ namespace Scripts.Editor.Elements
         private void ChangeImage(string path)
         {
             elementPath = path;
+            Debug.Log(elementPath);
             img.style.backgroundImage = AssetDatabase.LoadAssetAtPath<Texture2D>(elementPath);
         }
     }

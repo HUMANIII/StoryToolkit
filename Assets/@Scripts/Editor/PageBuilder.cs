@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Scripts.Editor.Elements;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,8 +16,6 @@ namespace Scripts.Editor
         private const string Container = "Conainter";
         private const string WindowName = "PageBuilder";
         private const string PackageName = "PackageName";
-        private const string PackageNum = "PackageNum"; 
-        private const string PackageNameOption = "PackageNameOption";
         private const string BtnAdd = "Add";       
         private const string BtnSave = "Save";     
         private const string BtnClear = "Clear";     
@@ -28,6 +25,12 @@ namespace Scripts.Editor
         private const string ChooseOptions = "추가할 컴포넌트를 선택하세요.";
     
         private const string DirLastPageSetting = "./PageBuilder/LastPageSetting.txt";
+        private const string DirPagesInfo = "./PageBuilder/PagesInfo.txt";
+        private const string ElementEndFormat = "§§§"; 
+        private const string PageEndFormat = "§§"; 
+        private const string PackageEndFormat = "§"; 
+        
+        private StringBuilder sb = new StringBuilder();
     
     
         private IntegerField packageNum;
@@ -38,11 +41,14 @@ namespace Scripts.Editor
         private ImageElement image;
         private Label outputLabel;
         private DropdownField options;
+        private TextField packageName;
 
         private readonly Dictionary<string,Type> types = new();
         private readonly List<PageBuilderElement> elements = new();
         private readonly List<List<PageBuilderElement>> builtElements = new();
         private int curPage;
+        
+        private LinkedList<string> pageElements = new();
 
 
         [MenuItem("Page Builder/Page Builder")]
@@ -59,19 +65,22 @@ namespace Scripts.Editor
             //var ss = AssetDatabase.LoadAssetAtPath<StyleSheet>(string.Format(ToolKitPath.USS, windowName));
             //rootVisualElement.styleSheets.Add(ss);
 
-            packageNum = rootVisualElement.Q<IntegerField>(PackageNum);
             add = rootVisualElement.Q<Button>(BtnAdd);
             save = rootVisualElement.Q<Button>(BtnSave);
             clear = rootVisualElement.Q<Button>(BtnClear);
             builtPage = rootVisualElement.Q<ListView>(BuiltPage);
             outputLabel = rootVisualElement.Q<Label>(OutputLabel);
             ElementsContainer = rootVisualElement.Q<VisualElement>(Container);
+            packageName = rootVisualElement.Q<TextField>(PackageName);
         
             options = rootVisualElement.Q<DropdownField>(Options);
             SetDropDown();
             LoadCurPackageSetting();
+            LoadAllData();
             
             clear.clicked += ClearPage;
+            add.clicked += AddData;
+            save.clicked += SaveAllData;
         }
 
         public void OnDestroy()
@@ -88,7 +97,7 @@ namespace Scripts.Editor
             }
         }
 
-        public void ClearPage()
+        private void ClearPage()
         {
             foreach (var element in elements)
             {
@@ -108,7 +117,6 @@ namespace Scripts.Editor
                 return;
             }
             PageBuilderElement element = CreateInstance(type) as PageBuilderElement;
-            //PageBuilderElement element = Activator.CreateInstance(types[elementName]) as PageBuilderElement;
             if (element == null)
             {
                 Debug.LogError(elementName + " could not be instantiated.");
@@ -116,6 +124,21 @@ namespace Scripts.Editor
             }
             elements.Add(element);
             element.AddElement(this);
+        }
+
+        private void AddData()
+        {
+            sb.Clear();
+            sb.AppendLine(packageName.value);
+            
+            foreach(var element in elements)
+            {
+                element.GetData(ref sb);
+                sb.AppendLine(ElementEndFormat);
+            }
+            pageElements.AddLast(sb.ToString());
+            Debug.Log("data added");
+            ResetPage();
         }
 
         private void SetDropDown()
@@ -179,38 +202,122 @@ namespace Scripts.Editor
             }
         }
 
+        public void RemoveElement(PageBuilderElement element)
+        {
+            elements.Remove(element);
+            element.Element.RemoveFromHierarchy();
+        }
+
         private void SaveCurPackageSetting()
         {
-            var sb = new StringBuilder();
-            foreach (var element in elements)
+            sb.Clear();
+            try
             {
-                sb.Append("\t" + element.GetType().Name);
+                foreach (var element in elements)
+                {
+                    sb.Append("\t" + element.GetType().Name);
+                }
+                Debug.unityLogger.Log(sb + " is Saved");
+                string dirName = Path.GetDirectoryName(DirLastPageSetting);
+                if (!Directory.Exists(dirName))
+                {
+                    Directory.CreateDirectory(dirName ?? string.Empty);
+                }
+                File.WriteAllText(DirLastPageSetting, sb.ToString());
             }
-            Debug.unityLogger.Log(sb + " is Saved");
-            string dirName = Path.GetDirectoryName(DirLastPageSetting);
-            if (!Directory.Exists(dirName))
+            catch (Exception e)
             {
-                Directory.CreateDirectory(dirName ?? string.Empty);
+                Console.WriteLine(e);
+                throw;
             }
-            File.WriteAllText(DirLastPageSetting, sb.ToString());
+            
         }
 
         private void LoadCurPackageSetting()
         {
             string dirName = Path.GetDirectoryName(DirLastPageSetting);
-            if (!Directory.Exists(dirName))
+            try
             {
-                Directory.CreateDirectory(dirName ?? string.Empty);
-            }
-
-            foreach (string line in File.ReadAllLines(DirLastPageSetting))
-            {
-                foreach (string elementsName in EditorUtils.GetStringBeforeSeparator(line))
+                if (!Directory.Exists(dirName))
                 {
-                    if(elementsName == string.Empty)
-                        continue;
-                    AddElement(elementsName);
+                    Directory.CreateDirectory(dirName ?? string.Empty);
                 }
+                if (!File.Exists(DirLastPageSetting))
+                {
+                    File.WriteAllText(DirLastPageSetting, string.Empty);
+                }
+
+                foreach (string line in File.ReadAllLines(DirLastPageSetting))
+                {
+                    foreach (string elementsName in EditorUtils.GetStringBeforeSeparator(line))
+                    {
+                        if(elementsName == string.Empty)
+                            continue;
+                        AddElement(elementsName);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private void SaveAllData()
+        {
+            sb.Clear();
+            try
+            {
+                foreach (var element in pageElements)
+                {
+                    sb.AppendLine(element);
+                    sb.AppendLine(PageEndFormat);
+                }
+                Debug.unityLogger.Log(sb + " is Saved");
+                string dirName = Path.GetDirectoryName(DirPagesInfo);
+                if (!Directory.Exists(dirName))
+                {
+                    Directory.CreateDirectory(dirName ?? string.Empty);
+                }
+                File.WriteAllText(DirPagesInfo, sb.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private void LoadAllData()
+        {
+            string dirName = Path.GetDirectoryName(DirPagesInfo);
+            try
+            {
+                if (!Directory.Exists(dirName))
+                {
+                    Directory.CreateDirectory(dirName ?? string.Empty);
+                }
+                if (!File.Exists(DirPagesInfo))
+                {
+                    File.WriteAllText(DirPagesInfo, string.Empty);
+                    return;
+                }
+                sb.Clear();
+                foreach (string line in File.ReadLines(DirPagesInfo))
+                {
+                    sb.AppendLine(line);
+                    if (line != PageEndFormat) 
+                        continue;
+                    
+                    pageElements.AddFirst(sb.ToString());
+                    sb.Clear();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }
