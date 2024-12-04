@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Scripts.Editor.Elements;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -56,7 +57,8 @@ namespace Scripts.Editor
         private int curPage;
         
         
-        private Dictionary<string, LinkedList<string>> pageElements = new();
+        public Dictionary<string, LinkedList<string>> pageElements = new();
+        public Dictionary<string, LinkedList<PageBuilderElement>> tempPageElements = new();
 
 
         [MenuItem("Page Builder/Page Builder")]
@@ -145,11 +147,17 @@ namespace Scripts.Editor
                 element.GetData(ref sb);
             }
 
-            if (pageElements.ContainsKey(packageName.value))
+            if (!pageElements.ContainsKey(packageName.value))
             {
-                pageElements.Add(packageName.value, pageElements[packageName.value]);
+                pageElements.Add(packageName.value, new LinkedList<string>());
+                tempPageElements.Add(packageName.value, new LinkedList<PageBuilderElement>());
             }
             pageElements[packageName.value].AddLast(sb.ToString());
+
+            foreach (var element in elements)
+            {
+                tempPageElements[packageName.value].AddLast(element);
+            }
             Debug.Log("data added");
             ResetPage();
         }
@@ -270,16 +278,18 @@ namespace Scripts.Editor
             }
             
             await using var sw = new StreamWriter(DirLastPageSetting, false);
-            foreach (var pageElement in pageElements)
-            {
-                await sw.WriteLineAsync(PackageStartFormat);
-                await sw.WriteLineAsync(pageElement.Key);
-                foreach (var element in pageElement.Value)
-                {
-                    await sw.WriteLineAsync(PageStartFormat);
-                    await sw.WriteLineAsync(element);
-                }
-            }
+            // foreach (var pageElement in pageElements)
+            // {
+            //     await sw.WriteLineAsync(PackageStartFormat);
+            //     await sw.WriteLineAsync(pageElement.Key);
+            //     foreach (var element in pageElement.Value)
+            //     {
+            //         await sw.WriteLineAsync(PageStartFormat);
+            //         await sw.WriteLineAsync(element);
+            //     }
+            // }
+            var jsonData = JsonConvert.SerializeObject(pageElements);
+            await sw.WriteAsync(jsonData);
             Debug.Log("data saved");
         }
 
@@ -295,31 +305,40 @@ namespace Scripts.Editor
                 File.WriteAllText(DirPagesInfo, string.Empty);
                 return;
             }
+            
+            
 
             pageElements.Clear();
-            ReadType rt = ReadType.Package;
-            string[] temp = new string[2];
-            string tempPackageName = String.Empty; 
-            string tempPage = String.Empty;
-            bool counter = false;
             using var sr = new StreamReader(DirPagesInfo);
+            sb.Clear();
             while (!sr.EndOfStream)
             {
-                counter = !counter;
-                temp[counter ? 1 : 0] = await sr.ReadLineAsync();
-                switch (temp[counter ? 1 : 0])
-                {
-                    case PackageStartFormat :
-                        rt = ReadType.Package;
-                        continue;
-                    case PageStartFormat :
-                        rt = ReadType.Page;
-                        continue;
-                    case ElementStartFormat :
-                        rt = ReadType.Element;
-                        continue;
-                }
-                // switch (rt)
+                sb.Append(await sr.ReadLineAsync());
+            }
+            pageElements = JsonConvert.DeserializeObject<Dictionary<string,LinkedList<string>>>(sb.ToString());
+            pageElements ??= new Dictionary<string, LinkedList<string>>();
+            // ReadType rt = ReadType.Package;
+            // string[] temp = new string[2];
+            // string tempPackageName = String.Empty; 
+            // string tempPage = String.Empty;
+            // bool counter = false;
+            // while (!sr.EndOfStream)
+            // {
+            //     counter = !counter;
+            //     temp[counter ? 1 : 0] = await sr.ReadLineAsync();
+            //     switch (temp[counter ? 1 : 0])
+            //     {
+            //         case PackageStartFormat :
+            //             rt = ReadType.Package;
+            //             continue;
+            //         case PageStartFormat :
+            //             rt = ReadType.Page;
+            //             continue;
+            //         case ElementStartFormat :
+            //             rt = ReadType.Element;
+            //             continue;
+            //     }
+            //     // switch (rt)
                 // {
                 //     case ReadType.Package:
                 //         tempPackageName = temp[counter ? 1 : 0];
@@ -332,7 +351,7 @@ namespace Scripts.Editor
                 //     case ReadType.Element:
                 //         continue;
                 // }
-            }
+            //}
         }
     }
 }
