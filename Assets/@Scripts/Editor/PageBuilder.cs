@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Scripts.Editor.Elements;
 using UnityEditor;
 using UnityEngine;
@@ -26,9 +27,16 @@ namespace Scripts.Editor
     
         private const string DirLastPageSetting = "./PageBuilder/LastPageSetting.txt";
         private const string DirPagesInfo = "./PageBuilder/PagesInfo.txt";
-        private const string ElementEndFormat = "§§§"; 
-        private const string PageEndFormat = "§§"; 
-        private const string PackageEndFormat = "§"; 
+        private const string ElementStartFormat = "§§§"; 
+        private const string PageStartFormat = "§§"; 
+        private const string PackageStartFormat = "§"; 
+        
+        private enum ReadType
+        {
+            Package,
+            Page,
+            Element,
+        }
         
         private StringBuilder sb = new StringBuilder();
     
@@ -45,10 +53,10 @@ namespace Scripts.Editor
 
         private readonly Dictionary<string,Type> types = new();
         private readonly List<PageBuilderElement> elements = new();
-        private readonly List<List<PageBuilderElement>> builtElements = new();
         private int curPage;
         
-        private LinkedList<string> pageElements = new();
+        
+        private Dictionary<string, LinkedList<string>> pageElements = new();
 
 
         [MenuItem("Page Builder/Page Builder")]
@@ -133,10 +141,15 @@ namespace Scripts.Editor
             
             foreach(var element in elements)
             {
+                sb.AppendLine(ElementStartFormat);
                 element.GetData(ref sb);
-                sb.AppendLine(ElementEndFormat);
             }
-            pageElements.AddLast(sb.ToString());
+
+            if (pageElements.ContainsKey(packageName.value))
+            {
+                pageElements.Add(packageName.value, pageElements[packageName.value]);
+            }
+            pageElements[packageName.value].AddLast(sb.ToString());
             Debug.Log("data added");
             ResetPage();
         }
@@ -184,22 +197,6 @@ namespace Scripts.Editor
                     options.Blur();
                 }
             });
-        }
-
-        private void AddPackageSetting()
-        {
-            builtElements.Add(elements);
-            curPage = builtElements.Count;
-        }
-
-        private void SelectPackageSetting(int pageNum)
-        {
-            curPage = pageNum;
-            ClearPage();
-            foreach (var item in builtElements[curPage])
-            {
-                elements.Add(item);
-            }
         }
 
         public void RemoveElement(PageBuilderElement element)
@@ -264,60 +261,77 @@ namespace Scripts.Editor
             }
         }
 
-        private void SaveAllData()
-        {
-            sb.Clear();
-            try
-            {
-                foreach (var element in pageElements)
-                {
-                    sb.AppendLine(element);
-                    sb.AppendLine(PageEndFormat);
-                }
-                Debug.unityLogger.Log(sb + " is Saved");
-                string dirName = Path.GetDirectoryName(DirPagesInfo);
-                if (!Directory.Exists(dirName))
-                {
-                    Directory.CreateDirectory(dirName ?? string.Empty);
-                }
-                File.WriteAllText(DirPagesInfo, sb.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        private void LoadAllData()
+        private async void SaveAllData()
         {
             string dirName = Path.GetDirectoryName(DirPagesInfo);
-            try
+            if (!Directory.Exists(dirName))
             {
-                if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName ?? string.Empty);
+            }
+            
+            await using var sw = new StreamWriter(DirLastPageSetting, false);
+            foreach (var pageElement in pageElements)
+            {
+                await sw.WriteLineAsync(PackageStartFormat);
+                await sw.WriteLineAsync(pageElement.Key);
+                foreach (var element in pageElement.Value)
                 {
-                    Directory.CreateDirectory(dirName ?? string.Empty);
-                }
-                if (!File.Exists(DirPagesInfo))
-                {
-                    File.WriteAllText(DirPagesInfo, string.Empty);
-                    return;
-                }
-                sb.Clear();
-                foreach (string line in File.ReadLines(DirPagesInfo))
-                {
-                    sb.AppendLine(line);
-                    if (line != PageEndFormat) 
-                        continue;
-                    
-                    pageElements.AddFirst(sb.ToString());
-                    sb.Clear();
+                    await sw.WriteLineAsync(PageStartFormat);
+                    await sw.WriteLineAsync(element);
                 }
             }
-            catch (Exception e)
+            Debug.Log("data saved");
+        }
+
+        private async Task LoadAllData()
+        {
+            string dirName = Path.GetDirectoryName(DirPagesInfo);
+            if (!Directory.Exists(dirName))
             {
-                Console.WriteLine(e);
-                throw;
+                Directory.CreateDirectory(dirName ?? string.Empty);
+            }
+            if (!File.Exists(DirPagesInfo))
+            {
+                File.WriteAllText(DirPagesInfo, string.Empty);
+                return;
+            }
+
+            pageElements.Clear();
+            ReadType rt = ReadType.Package;
+            string[] temp = new string[2];
+            string tempPackageName = String.Empty; 
+            string tempPage = String.Empty;
+            bool counter = false;
+            using var sr = new StreamReader(DirPagesInfo);
+            while (!sr.EndOfStream)
+            {
+                counter = !counter;
+                temp[counter ? 1 : 0] = await sr.ReadLineAsync();
+                switch (temp[counter ? 1 : 0])
+                {
+                    case PackageStartFormat :
+                        rt = ReadType.Package;
+                        continue;
+                    case PageStartFormat :
+                        rt = ReadType.Page;
+                        continue;
+                    case ElementStartFormat :
+                        rt = ReadType.Element;
+                        continue;
+                }
+                // switch (rt)
+                // {
+                //     case ReadType.Package:
+                //         tempPackageName = temp[counter ? 1 : 0];
+                //         pageElements.Add(tempPackageName, new LinkedList<string>());
+                //         continue;
+                //     case ReadType.Page:
+                //         tempPage = temp[counter ? 1 : 0];
+                //         pageElements[tempPackageName].li
+                //         continue;
+                //     case ReadType.Element:
+                //         continue;
+                // }
             }
         }
     }

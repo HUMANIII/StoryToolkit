@@ -12,6 +12,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace Scripts.Editor
 {
+    [Serializable]
     public struct AddressAbleInfo
     {
         //실제 값의 타입
