@@ -15,13 +15,13 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 39acd2f269760094aa26647c6af73648
   m_SerializeEntries:
-  - m_GUID: 68f142b9881e8d643975110956f2b2d8
-    m_Address: 12/02/2024 15:41:08
+  - m_GUID: 4fb7b56443c77e84289897fdd1c9e56f
+    m_Address: BlueColor
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6924a26dddeddda418d084b286286d1a
-    m_Address: 12/04/2024 15:49:25
+    m_Address: Assets/UIToolKit/ImageSample/TestR.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

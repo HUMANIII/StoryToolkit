@@ -16,6 +16,7 @@ namespace Scripts.Editor.Elements
         public override void GetData(ref StringBuilder builder)
         {
             builder.AppendLine(nameof(TextBoxElement));
+            builder.AppendLine(ElementName.value);
             builder.AppendLine(text.value);
         }
 
@@ -28,6 +29,7 @@ namespace Scripts.Editor.Elements
 
         public override void ResetElement()
         {
+            base.ResetElement();
             text.value = string.Empty;
         }
 

@@ -2,10 +2,10 @@
     <engine:ListView name="BuildedPage" style="position: absolute; align-self: flex-end; width: 30%; height: 100%; padding-left: 10px;" />
     <engine:ScrollView name="ScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" style="width: 70%; height: 100%; position: absolute; align-self: flex-start;">
         <engine:VisualElement name="Conainter" style="flex-grow: 1; -unity-text-align: upper-center;" />
-        <engine:DropdownField label="AddOption" name="Options" style="flex-direction: column-reverse;" />
-        <engine:VisualElement name="Tail" style="flex-grow: 1; width: 576px; height: 315px; align-content: flex-end; position: absolute; justify-content: flex-end; align-self: center; bottom: -161px; left: auto; -unity-text-align: lower-left; flex-direction: column-reverse; flex-wrap: wrap; top: auto; right: auto; padding-top: 157px;">
-            <engine:Label name="OutputLabel" text="State Will Appear" style="bottom: auto; top: 150px; align-content: auto; -unity-text-align: upper-left; position: absolute;" />
-            <engine:VisualElement name="PageInfo" style="flex-grow: 1; height: auto; width: 100%; bottom: 0;">
+        <engine:DropdownField label="AddOption" name="Options" style="flex-direction: column-reverse; overflow: visible;" />
+        <engine:VisualElement name="Tail" enabled="true" picking-mode="Ignore" style="flex-grow: 1; width: 576px; height: 315px; align-content: flex-end; position: absolute; justify-content: flex-end; align-self: center; bottom: -161px; left: auto; -unity-text-align: lower-left; flex-direction: column-reverse; flex-wrap: wrap; top: auto; right: auto; padding-top: 157px;">
+            <engine:Label name="OutputLabel" text="State Will Appear" picking-mode="Ignore" style="bottom: auto; top: 150px; align-content: auto; -unity-text-align: upper-left; position: absolute;" />
+            <engine:VisualElement name="PageInfo" picking-mode="Ignore" style="flex-grow: 1; height: auto; width: 100%; bottom: 0;">
                 <engine:TextField label="PackageName" name="PackageName" style="width: 300px; flex-direction: column; align-items: stretch; align-self: stretch; position: absolute; top: 40px; left: 0;" />
                 <engine:IntegerField label="PackageNum" value="0" name="PackageNum" style="position: absolute; flex-direction: column; align-self: center; width: 30%; top: 40px; left: 300px; align-items: flex-start;" />
                 <engine:Toggle label="PackageNameOption" name="PackageNameOption" tooltip="if value is false AddressableName will be &quot;BookName&quot;_&quot;PageNum&quot;" style="position: absolute; top: 40px; left: 414px; flex-direction: column;" />

@@ -25,6 +25,7 @@ namespace Scripts.Editor.Elements
 
         public override void ResetElement()
         {
+            base.ResetElement();
             img.style.backgroundImage = null;
         }
 
@@ -40,7 +41,8 @@ namespace Scripts.Editor.Elements
         public override void GetData(ref StringBuilder builder)
         {
             builder.AppendLine(nameof(ImageElement));
-            string data = elementPath.GetAddressableInfo(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)).ToString();
+            builder.AppendLine(ElementName.value);
+            string data = elementPath.GetAddressableInfo(ElementName.value).ToString();
             builder.AppendLine(data);
         }
 

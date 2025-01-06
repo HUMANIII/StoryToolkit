@@ -1,6 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <engine:VisualElement style="flex-grow: 1; height: 325px;">
-        <engine:Button text="x" name="DeleteButton" style="top: 0; width: 25px; height: 25px; align-self: flex-end;" />
+        <engine:VisualElement name="ElementBase" style="flex-grow: initial; align-items: flex-start; flex-direction: row; flex-wrap: nowrap; flex-shrink: initial; width: 100%; justify-content: space-between;">
+            <engine:TextField label="ElementName" placeholder-text="filler text" name="ElementName" style="align-self: auto; align-content: flex-start;" />
+            <engine:Button text="x" name="DeleteButton" style="top: auto; width: 25px; height: 25px; align-self: center; -unity-text-align: middle-center; white-space: nowrap; flex-direction: row-reverse; align-content: flex-end;" />
+        </engine:VisualElement>
         <engine:VisualElement name="Image" style="flex-grow: 1; height: 300px; width: 100%; background-image: url(&quot;project://database/Assets/UIToolKit/ImageSample/Sample.png?fileID=2800000&amp;guid=e1541a81a6b2d1f4aa8df6f73c5009b9&amp;type=3#Sample&quot;);" />
     </engine:VisualElement>
 </engine:UXML>

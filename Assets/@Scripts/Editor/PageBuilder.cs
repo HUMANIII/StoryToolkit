@@ -28,19 +28,8 @@ namespace Scripts.Editor
     
         private const string DirLastPageSetting = "./PageBuilder/LastPageSetting.txt";
         private const string DirPagesInfo = "./PageBuilder/PagesInfo.txt";
-        private const string ElementStartFormat = "§§§"; 
-        private const string PageStartFormat = "§§"; 
-        private const string PackageStartFormat = "§"; 
-        
-        private enum ReadType
-        {
-            Package,
-            Page,
-            Element,
-        }
         
         private StringBuilder sb = new StringBuilder();
-    
     
         private IntegerField packageNum;
         private Button add;
@@ -57,8 +46,8 @@ namespace Scripts.Editor
         private int curPage;
         
         
-        public Dictionary<string, LinkedList<string>> pageElements = new();
-        public Dictionary<string, LinkedList<PageBuilderElement>> tempPageElements = new();
+        private Dictionary<string, LinkedList<string>> pageElements = new();
+        private readonly Dictionary<string, LinkedList<PageBuilderElement>> tempPageElements = new();
 
 
         [MenuItem("Page Builder/Page Builder")]
@@ -86,7 +75,7 @@ namespace Scripts.Editor
             options = rootVisualElement.Q<DropdownField>(Options);
             SetDropDown();
             LoadCurPackageSetting();
-            LoadAllData();
+            _ = LoadAllData();
             
             clear.clicked += ClearPage;
             add.clicked += AddData;
@@ -99,7 +88,7 @@ namespace Scripts.Editor
             ClearPage();
         }
 
-        public void ResetPage()
+        private void ResetPage()
         {
             foreach (var element in elements)
             {
@@ -115,7 +104,7 @@ namespace Scripts.Editor
             }
             elements.Clear();
         }
-
+//TODO: Add할때 옆에 요소 추가된걸로 보이게 만들기 및 누르면 해당 요소의 값 불러오기
         private void AddElement(string elementName)
         {
             if (elementName == ChooseOptions)
@@ -143,7 +132,6 @@ namespace Scripts.Editor
             
             foreach(var element in elements)
             {
-                sb.AppendLine(ElementStartFormat);
                 element.GetData(ref sb);
             }
 
@@ -161,7 +149,10 @@ namespace Scripts.Editor
             Debug.Log("data added");
             ResetPage();
         }
-
+        
+        /// <summary>
+        /// 추가 가능한 요소들 찾아서 드롭 다운에 세팅하기
+        /// </summary>
         private void SetDropDown()
         {
             //페이지 빌더 엘리먼트들의 상속을 받은 것들을 찾음
@@ -182,6 +173,8 @@ namespace Scripts.Editor
             options.choices.Add(ChooseOptions);
             options.value = ChooseOptions;
         
+            //드롭다운의 안내문구 출력을 위한 세팅 
+            
             //드롭다운 클릭시 안내요소 삭제
             options.RegisterCallback<FocusEvent>(_ =>
             {
@@ -207,12 +200,20 @@ namespace Scripts.Editor
             });
         }
 
+        /// <summary>
+        /// 요소 삭제
+        /// </summary>
+        /// <param name="element">삭제할 요소</param>
         public void RemoveElement(PageBuilderElement element)
         {
             elements.Remove(element);
             element.Element.RemoveFromHierarchy();
         }
 
+        #region 파일 입출력 관련
+        /// <summary>
+        /// 마지막으로 켜져 있던 요소들 저장
+        /// </summary>
         private void SaveCurPackageSetting()
         {
             sb.Clear();
@@ -238,15 +239,15 @@ namespace Scripts.Editor
             
         }
 
+        /// <summary>
+        /// 해당 창 종료하기 직전에 켜져 있던 요소들 불러오기
+        /// </summary>
         private void LoadCurPackageSetting()
         {
-            string dirName = Path.GetDirectoryName(DirLastPageSetting);
+            //파일 읽는 거라 예외처리 추가
             try
             {
-                if (!Directory.Exists(dirName))
-                {
-                    Directory.CreateDirectory(dirName ?? string.Empty);
-                }
+                DirLastPageSetting.CheckDir();
                 if (!File.Exists(DirLastPageSetting))
                 {
                     File.WriteAllText(DirLastPageSetting, string.Empty);
@@ -271,43 +272,33 @@ namespace Scripts.Editor
 
         private async void SaveAllData()
         {
-            string dirName = Path.GetDirectoryName(DirPagesInfo);
-            if (!Directory.Exists(dirName))
+            try
             {
-                Directory.CreateDirectory(dirName ?? string.Empty);
-            }
+                DirPagesInfo.CheckDir();
             
-            await using var sw = new StreamWriter(DirLastPageSetting, false);
-            // foreach (var pageElement in pageElements)
-            // {
-            //     await sw.WriteLineAsync(PackageStartFormat);
-            //     await sw.WriteLineAsync(pageElement.Key);
-            //     foreach (var element in pageElement.Value)
-            //     {
-            //         await sw.WriteLineAsync(PageStartFormat);
-            //         await sw.WriteLineAsync(element);
-            //     }
-            // }
-            var jsonData = JsonConvert.SerializeObject(pageElements);
-            await sw.WriteAsync(jsonData);
-            Debug.Log("data saved");
+                await using var sw = new StreamWriter(DirPagesInfo, false);
+
+                var jsonData = JsonConvert.SerializeObject(pageElements);
+                await sw.WriteAsync(jsonData);
+                Debug.Log("data saved");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private async Task LoadAllData()
         {
-            string dirName = Path.GetDirectoryName(DirPagesInfo);
-            if (!Directory.Exists(dirName))
-            {
-                Directory.CreateDirectory(dirName ?? string.Empty);
-            }
+            DirPagesInfo.CheckDir();
+            
             if (!File.Exists(DirPagesInfo))
             {
-                File.WriteAllText(DirPagesInfo, string.Empty);
+                await File.WriteAllTextAsync(DirPagesInfo, string.Empty);
                 return;
             }
             
-            
-
             pageElements.Clear();
             using var sr = new StreamReader(DirPagesInfo);
             sb.Clear();
@@ -317,41 +308,7 @@ namespace Scripts.Editor
             }
             pageElements = JsonConvert.DeserializeObject<Dictionary<string,LinkedList<string>>>(sb.ToString());
             pageElements ??= new Dictionary<string, LinkedList<string>>();
-            // ReadType rt = ReadType.Package;
-            // string[] temp = new string[2];
-            // string tempPackageName = String.Empty; 
-            // string tempPage = String.Empty;
-            // bool counter = false;
-            // while (!sr.EndOfStream)
-            // {
-            //     counter = !counter;
-            //     temp[counter ? 1 : 0] = await sr.ReadLineAsync();
-            //     switch (temp[counter ? 1 : 0])
-            //     {
-            //         case PackageStartFormat :
-            //             rt = ReadType.Package;
-            //             continue;
-            //         case PageStartFormat :
-            //             rt = ReadType.Page;
-            //             continue;
-            //         case ElementStartFormat :
-            //             rt = ReadType.Element;
-            //             continue;
-            //     }
-            //     // switch (rt)
-                // {
-                //     case ReadType.Package:
-                //         tempPackageName = temp[counter ? 1 : 0];
-                //         pageElements.Add(tempPackageName, new LinkedList<string>());
-                //         continue;
-                //     case ReadType.Page:
-                //         tempPage = temp[counter ? 1 : 0];
-                //         pageElements[tempPackageName].li
-                //         continue;
-                //     case ReadType.Element:
-                //         continue;
-                // }
-            //}
         }
+        #endregion
     }
 }

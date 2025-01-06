@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -158,6 +159,19 @@ namespace Scripts.Editor
             Object asset = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
             rtn.Type = asset.GetType();
             return rtn;
+        }
+
+        /// <summary>
+        /// 해당위치의 폴더가 있는지 검사 및 추가
+        /// </summary>
+        /// <param name="path">검사할 경로</param>
+        public static void CheckDir(this string path)
+        {
+            string dirName = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dirName))
+            {
+                Directory.CreateDirectory(dirName ?? string.Empty);
+            }
         }
     }
 }
